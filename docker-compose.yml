@@ -1,0 +1,94 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:alpine3.16
+    command: postgres -c 'max_connections=2000'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=example
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-postgres:/docker-entrypoint-initdb.d
+
+  keycloak:
+    image: bitnami/keycloak:20.0.3-debian-11-r13
+    environment:
+      - BASE_URL=http://localhost/
+      - APP_NAME=XXXX应用系统
+      - KEYCLOAK_DATABASE_HOST=postgres
+      - KEYCLOAK_CREATE_ADMIN_USER=true
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_USER=root
+      - KEYCLOAK_DATABASE_PASSWORD=example
+      - KEYCLOAK_PROXY=edge
+      - KEYCLOAK_HTTP_RELATIVE_PATH=/auth
+      - KEYCLOAK_PRODUCTION=true
+      # 必须加 --hostname-strict-https=false，否则无法打开 admin 控制台
+      # 参考文献 https://www.keycloak.org/server/hostname
+      - KEYCLOAK_EXTRA_ARGS=--hostname-strict-https=false -Dkeycloak.import=/tmp/realm.json --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./init-keycloak/realm.json:/tmp/realm.json
+      - ./init-keycloak/tp-theme:/opt/bitnami/keycloak/themes/tp-theme
+    depends_on:
+      - postgres
+
+  zookeeper:
+    image: 'bitnami/zookeeper:3.8.0-debian-11-r49'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+
+
+  # 有关 Kafka Docker 中的配置的关键概念介绍及区分线索
+  # 参考文献 https://stackoverflow.com/questions/42998859/kafka-server-configuration-listeners-vs-advertised-listeners
+  kafka:
+    image: 'bitnami/kafka:3.3.1-debian-11-r5'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    
+    ports:
+      - "9093:9093"
+    depends_on:
+      - zookeeper
+
+  minio:
+    image: 'bitnami/minio:2022.10.8-debian-11-r0'
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - MINIO_SERVER_HOST=localhost
+      - MINIO_ROOT_USER=minio-root-user
+      - MINIO_ROOT_PASSWORD=minio-root-password
+      - MINIO_DEFAULT_BUCKETS=tp-bucket
+      - MINIO_NOTIFY_KAFKA_BROKERS_TP=kafka:9092
+      - MINIO_NOTIFY_KAFKA_ENABLE_TP=on
+      - MINIO_NOTIFY_KAFKA_TOPIC_TP=minio_bucket_notification
+    depends_on:
+      - kafka
+
+  nginx:
+    image: nginx:1.23.2-alpine
+    volumes:
+#      - ./ss-web/dist:/usr/share/nginx/html
+      - ./init-nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./init-nginx/default.conf:/etc/nginx/conf.d/default.conf
+    command: [ nginx-debug, '-g', 'daemon off;' ]
+    ports:
+      - "80:80"
+    extra_hosts:
+      - host.docker.internal:host-gateway

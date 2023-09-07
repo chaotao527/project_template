@@ -1,0 +1,145 @@
+@import "animate.css";
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+body {
+  background-image: url('../img/background.png');
+  background-position: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+body > div {
+  width: 642px;
+  height: 100%;
+  margin-left: auto;
+  margin-right: 230px;
+}
+
+div#kc-header {
+  text-align: center;
+  font-family: "微软雅黑", serif;
+  font-weight: bold;
+  font-size: 36px;
+  color: #1354eb;
+  padding-left: 64px;
+  line-height: 48px;
+  background-image: url("../img/logo.png");
+  background-repeat: no-repeat;
+  background-position-x: 0px;
+  background-position-y: center;
+  margin-bottom: 40px;
+}
+
+div#kc-form {
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.3);
+  height: 400px;
+  padding: 80px 120px;
+  background-color: rgba(255,255,255,0.1);
+}
+
+input#username, input#password {
+  height: 40px;
+  width: 300px;
+  margin-left: 48px;
+  margin-right: 48px;
+  font-size: 14px;
+  background-repeat: no-repeat;
+  background-position-x: 16px;
+  background-position-y: 10px;
+  border-radius: 4px;
+  border: 1px solid white;
+}
+
+div#username-wrapper {
+  background-color: white;
+  background-image: url("../img/username.png");
+  background-repeat: no-repeat;
+  background-position-x: 16px;
+  background-position-y: center;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+div#password-wrapper {
+  background-color: white;
+  background-image: url("../img/password.png");
+  background-repeat: no-repeat;
+  background-position-x: 16px;
+  background-position-y: center;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding-right: 16px;
+  border: 1px solid transparent;
+}
+
+input#kc-login {
+  height: 40px;
+  width: 400px;
+  font-size: 16px;
+  color: white;
+  background-color: #1354eb;
+  border-radius: 4px;
+  border: 1px solid #1354eb;
+}
+
+span#input-error {
+  font-size: 12px;
+  color: #ff374c;
+  line-height: 24px;
+}
+
+div.tl {
+  position: absolute;
+  border-top: 2px solid #1354eb;
+  border-left: 2px solid #1354eb;
+  left: -1px;
+  top: -1px;
+  width: 16px;
+  height: 16px;
+}
+
+div.bl {
+  position: absolute;
+  border-bottom: 2px solid #1354eb;
+  border-left: 2px solid #1354eb;
+  left: -1px;
+  bottom: -1px;
+  width: 16px;
+  height: 16px;
+}
+
+div.tr {
+  position: absolute;
+  border-top: 2px solid #1354eb;
+  border-right: 2px solid #1354eb;
+  right: -1px;
+  top: -1px;
+  width: 16px;
+  height: 16px;
+}
+
+div.br {
+  position: absolute;
+  border-bottom: 2px solid #1354eb;
+  border-right: 2px solid #1354eb;
+  right: -1px;
+  bottom: -1px;
+  width: 16px;
+  height: 16px;
+}
+
