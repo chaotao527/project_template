@@ -1,0 +1,74 @@
+server:
+  port: 8082
+  servlet:
+    context-path: "/api/v1"
+
+spring:
+  application:
+    name: biz-batch-service
+  datasource:
+    url: jdbc:postgresql://${MYSQL_HOST:localhost}:5432/batch
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD:example}
+    driver-class-name: org.postgresql.Driver
+    tomcat:
+      max-active: 8192
+  cloud:
+    zookeeper:
+      connect-string: ${ZOOKEEPER_HOST:localhost}:${ZOOKEEPER_PORT:2181}
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 86400000
+            readTimeout: 86400000
+            loggerLevel: full
+      autoconfiguration:
+        jackson:
+          enabled: true
+  profiles:
+    active: @activatedProfile@
+  batch:
+    jdbc:
+      initialize-schema: always
+
+minio:
+  endpoint: http://${MINIO_HOST:localhost}:${MINIO_PORT:9000}/
+  username: ${MINIO_ROOT_USER:minio-root-user}
+  password: ${MINIO_ROOT_PASSWORD:minio-root-password}
+  bucket: ${MINIO_DEFAULT_BUCKET:tp-bucket}
+  bucket-notification-topic: ${MINIO_BUCKET_NOTIFICATION_TOPIC:minio_bucket_notification}
+
+app:
+  ddl-auto: validate
+  ai:
+    baseUrl: http://${AI_HOST:10.1.140.144}:${AI_PORT:9010}/
+    mergeUrl: http://${AI_MERGE_HOST:10.1.140.144}:${AI_MERGE_PORT:8089}/
+  datasource:
+    biz:
+      url: jdbc:postgresql://${MYSQL_HOST:localhost}:5432/test
+      jdbcUrl: jdbc:postgresql://${MYSQL_HOST:localhost}:5432/test
+      username: root
+      password: ${MYSQL_ROOT_PASSWORD:example}
+      driver-class-name: org.postgresql.Driver
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      hikari:
+        connection-timeout: 3600000
+      liquibase:
+        enabled: false
+  show-sql: false
+  kafka:
+    minio:
+      consumer:
+        bootstrap-servers: ${KAFKA_HOST:localhost}:9093
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        heartbeat-interval: 5s
+        auto-offset-reset: latest
+        enable-auto-commit: false
+        group-id: minio
+  batch:
+    task-executor:
+      core-pool-size: 5
+      max-pool-size: 10
+      queue-capacity: 10

@@ -1,0 +1,28 @@
+datasource-types:
+  types:
+    - name: app
+      children:
+        - name: 社交媒体(个人)
+          children:
+            - name: facebook、tiwwter等app
+    - name: web
+      children:
+        - name: 百科网站
+          children:
+            - name: 维基百科、 百度百科等
+        - name: 第三方智库
+          children:
+            - name: Seaforces online、 Unofficial US Navy Site
+        - name: 出版机构
+          children:
+            - name: missilery
+        - name: 科研学术机构
+          children:
+            - name: USNI News、 wikipedia
+        - name: 军工企业
+        - name: 会议
+        - name: 美政府官方
+        - name: 美军官方
+
+
+

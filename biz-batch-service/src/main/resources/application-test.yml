@@ -1,0 +1,37 @@
+keycloak:
+  realm: ${KEYCLOAK_REALM:console-app}
+  client-id: ${KEYCLOAK_CLIENT_ID:console-cli}
+  auth-server-url: http://${KEYCLOAK_HOST:localhost}:8080/auth
+  admin:
+    password: admin
+    username: admin
+
+app:
+  datasource:
+    biz:
+      url: jdbc:h2:mem:tp
+      jdbcUrl: jdbc:h2:mem:tp
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+      dialect: org.hibernate.dialect.H2Dialect
+      liquibase:
+        change-log: db/changelog/changelog-master.xml
+        enabled: true
+    keycloak:
+      url: jdbc:postgresql://${MYSQL_HOST:localhost}:5432/keycloak
+      jdbcUrl: jdbc:postgresql://${MYSQL_HOST:localhost}:5432/keycloak
+      username: root
+      password: ${MYSQL_ROOT_PASSWORD:example}
+      driver-class-name: org.postgresql.Driver
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: info
+    com:
+      singhand:
+        sd:
+          template:
+            bizbatchservice:
+              tasklet: debug

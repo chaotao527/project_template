@@ -1,0 +1,6 @@
+plan-coordinate-types:
+  types:
+    - name: 打击计划
+    - name: 防空反导计划
+    - name: 反潜计划
+    - name: 保障计划
